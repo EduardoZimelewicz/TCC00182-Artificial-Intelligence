@@ -1,26 +1,26 @@
 import time
 
-def buildNodes():
+def buildNodes(verticesFile, edgesFile):
     nodes = {}
 
     # Vértices
-    vertices = open('vertices.txt', encoding='utf8')
+    vertices = open(verticesFile, encoding='utf8')
     next(vertices) # Pula a primeira linha do arquivo
     for vertex in vertices:
         v = vertex.split('\t')
         node = {
             'id': int(v[0]),
             'title': v[1],
-            'year': v[2],
-            'venue': v[3], # Editor
-            'authors': v[4][:-1].split(','), # Remove '\n' e cria vetor de autores
+            'year': v[2] or None,
+            'venue': v[3] or None, # Editor
+            'authors': v[4][:-1].split(',') if len(v[4][:-1].split(',')) > 1 else [], # Remove '\n' e cria vetor de autores
             'citations': [] # Edges
         }
         nodes[v[0]] = node
     vertices.close()
 
     # Arestas
-    edges = open('edges.txt', encoding='utf8')
+    edges = open(edgesFile, encoding='utf8')
     next(edges)
     for edge in edges:
         e = edge.split('\t')
@@ -35,9 +35,26 @@ def buildNodes():
     return nodes
 
 
+def buildGraph(nodes):
+    graph = {}
+
+    # TODO Continuar
+
+    return graph
+
+
+def searchTopInfluencers(graph, top = 10):
+    rank = []
+
+    # TODO Continuar
+
+    return rank
+
 # Main
 tempoInicial = time.clock()
 
-print(buildNodes()['81'])
+nodes = buildNodes('vertices.txt', 'edges.txt')
+graph = buildGraph(nodes)
+searchTopInfluencers(graph)
 
 print('\nTempo de execução: ' + str(round(time.clock() - tempoInicial,2)) + 's')
