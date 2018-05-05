@@ -4,7 +4,7 @@ def buildNodes(verticesFile, edgesFile):
     nodes = {}
 
     # Vértices
-    vertices = open(verticesFile, encoding='utf8')
+    vertices = open(verticesFile, 'r', encoding='utf8')
     next(vertices) # Pula a primeira linha do arquivo
     for vertex in vertices:
         v = vertex.split('\t')
@@ -14,13 +14,15 @@ def buildNodes(verticesFile, edgesFile):
             'year': v[2] or None,
             'venue': v[3] or None, # Editor
             'authors': v[4][:-1].split(',') if len(v[4][:-1].split(',')) > 1 else [], # Remove '\n' e cria vetor de autores
-            'citations': [] # Edges
+            'feitos': [], # Edges
+            'recebidos': [], # Edges
+            'peso': 0 # TODO trocar por formula da heuristica
         }
         nodes[v[0]] = node
     vertices.close()
 
     # Arestas
-    edges = open(edgesFile, encoding='utf8')
+    edges = open(edgesFile, 'r', encoding='utf8')
     next(edges)
     for edge in edges:
         e = edge.split('\t')
@@ -29,7 +31,9 @@ def buildNodes(verticesFile, edgesFile):
             'to': e[1].split()[0],  # Documento citado
             'weight': int(e[1].split()[1]),  # Peso da aresta, padrão 1
         }
-        nodes[e[0]]['citations'].append(citation)
+        nodes[e[0]]['feitos'].append(citation) # Adiciono quem eu cito
+        nodes[e[1].split()[0]]['recebidos'].append(citation) # adiciono uma citação pro citado
+        nodes[e[1].split()[0]]['peso'] += 1 # TODO trocar por formula da heuristica
     edges.close()
 
     return nodes
@@ -54,6 +58,7 @@ def searchTopInfluencers(graph, top = 10):
 tempoInicial = time.clock()
 
 nodes = buildNodes('vertices.txt', 'edges.txt')
+print(nodes)
 graph = buildGraph(nodes)
 searchTopInfluencers(graph)
 
