@@ -1,0 +1,11 @@
+*title, year, publication venue, and authors, formatted as "id\txxx\txxxx\txxx\txxx"
+0	Using Interval Timed Coloured Petri Nets to Calculate Performance Bounds	1994	Computer Performance Evaluation	Wil M. P. van der Aalst
+1	Roles: A Methodology for Representing Multifaceted Objects	1991	DEXA	Mike P. Papazoglou
+2	Using Formal Methods to Construct a Software Component Library	1993	ESEC	Jun-Jang Jeng,Betty H. C. Cheng
+3	Algorithms for Asynchronous Parallel Processing of Object-Oriented Databases	1995	IEEE Trans. Knowl. Data Eng.	Arun K. Thakore,Stanley Y. W. Su,Herman Lam
+4	Generating a Process Model from a Process Audit Log	2003	Business Process Management	Mati Golani,Shlomit S. Pinter
+5	Evaluation of Generic Process Design Patterns: An Experimental Study	2000	Business Process Management	Michael Zapf,Armin Heinzl
+6	Process Mining: Discovering Direct Successors in Process Logs	2002	Discovery Science	Laura Maruster,A. J. M. M. Weijters,Wil M. P. van der Aalst,Antal van den Bosch
+7	Algebraic Change Propagation for Semijoin and Outerjoin Queries	1998	SIGMOD Record	Timothy Griffin,Bharat Kumar
+8	Model-Driven Trust Negotiation for Web Services	2003	IEEE Internet Computing	Halvard Skogsrud,Boualem Benatallah,Fabio Casati
+9	Characterization of Database Access Pattern for Analytic Prediction of Buffer Hit Probability	1995	VLDB J.	Asit Dan,Philip S. Yu,Jen-Yao Chung
