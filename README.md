@@ -9,3 +9,5 @@ Jie Tang, Jimeng Sun, Chi Wang, and Zi Yang. Social Influence Analysis in Large-
 - Elihofni
 - Leonardo
 - Marcelo
+
+Run with Python 3.4
