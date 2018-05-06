@@ -16,7 +16,8 @@ def buildNodes(verticesFile, edgesFile):
             'authors': v[4][:-1].split(',') if len(v[4][:-1].split(',')) > 1 else [], # Remove '\n' e cria vetor de autores
             'feitos': [], # Edges
             'recebidos': [], # Edges
-            'peso': 0 # TODO trocar por formula da heuristica
+            'peso': 0, # TODO trocar por formula da heuristica
+            'estado': 0 #Estado do nó, meta, inicio...
         }
         nodes[v[0]] = node
     vertices.close()
@@ -53,6 +54,59 @@ def searchTopInfluencers(graph, top = 10):
     # TODO Continuar
 
     return rank
+
+
+def expandirNo(node):
+    return node['recebidos']
+
+def escolheNoFolha(nodes):
+    escolhido = {}
+
+    for node in nodes:
+        escolhido = nodes[node]
+
+    return escolhido
+
+def isElementoInArray(elemento, array):
+    retorno = 0
+
+    for el in array:
+        if el == elemento:
+            retorno = 1
+
+    return retorno
+
+def funcaoBuscaGrafo(noInicial):
+    #inicializar frontier usando o estado inicial do problema
+    frontier = []
+    frontier.append(noInicial)
+
+    conjuntoExplorado = []
+
+    retorno = 'sucesso'
+
+    while True:
+        if len(frontier) == 0:
+            retorno = 'falha'
+            break
+
+        noFolhaAtual = escolheNoFolha(frontier)
+        frontier.remove(noFolhaAtual)
+
+        if noFolhaAtual['estado'] == 1: #Nó está no estado meta
+            #retorna solucao
+            break
+
+        conjuntoExplorado.append(noFolhaAtual)
+
+        filhos = expandirNo(noFolhaAtual)
+
+        #Adiciona filhos que nao estão no conjunto explorado ou na fronteira
+        for filho in filhos:
+            if isElementoInArray(filhos[filho],conjuntoExplorado) == 0 or isElementoInArray(filhos[filho],frontier) == 0:
+                frontier.append(filhos[filho])
+
+    return retorno
 
 # Main
 tempoInicial = time.clock()
