@@ -216,16 +216,21 @@ def funcaoBuscaGrafo(noInicial, nodes):
     influencias = []
 
     for r in retorno:
-        influencias.append(r['id'])
+        info = [r['id'],r['pathCost']]
 
-    influencias.sort()
+        influencias.append(info)
+
+    influencias.sort(key=getKey)
 
     print('INFLUÊNCIAS\n\n')
 
     for i in reversed(influencias):
-        print(str(i) + '\n')
+        print('id: ' + str(i[0]) + '   influencia: ' + str(i[1]) + '\n')
 
     return retorno
+
+def getKey(item):
+    return item[1]
 
 def printaVisitados(visitados):
     #   no = {
