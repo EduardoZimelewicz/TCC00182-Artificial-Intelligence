@@ -1,4 +1,5 @@
 import time
+from random import randint
 
 
 def buildNodes(verticesFile, edgesFile):
@@ -15,10 +16,9 @@ def buildNodes(verticesFile, edgesFile):
             'year': v[2] or None,
             'venue': v[3] or None,  # Editor
             'authors': v[4][:-1].split(',') if len(v[4][:-1].split(',')) > 1 else [], # Remove '\n' e cria vetor de autores
-            'feitos': [],  # Edges
-            'recebidos': [],  # Edges
-            'peso': 0,  # TODO trocar por formula da heuristica
-            'estado': 0  # Estado do nó, meta, inicio...
+            'citations-given': [],  # Citações feitas
+            'cited-by': [],  # Citações recebidas
+            'power': 0, # Índice de influência
         }
         nodes[v[0]] = node
     vertices.close()
@@ -29,89 +29,68 @@ def buildNodes(verticesFile, edgesFile):
     for edge in edges:
         e = edge.split('\t')
         citation = {
-            'from': e[0],  # Documento citador
-            'to': e[1].split()[0],  # Documento citado
-            'weight': int(e[1].split()[1]),  # Peso da aresta, padrão 1
+            'from': e[0],  # Artigo citador
+            'to': e[1].split()[0],  # Artigo citado
+            # 'weight': int(e[1].split()[1]),  # Peso da aresta, padrão 1
         }
-        nodes[e[0]]['feitos'].append(citation)  # Adiciono quem eu cito
-        nodes[e[1].split()[0]]['recebidos'].append(citation)  # adiciono uma citação pro citado
-        nodes[e[1].split()[0]]['peso'] += 1  # TODO trocar por formula da heuristica
+        nodes[e[0]]['citations-given'].append(citation)  # Adiciono quem eu cito
+        nodes[e[1].split()[0]]['cited-by'].append(citation)  # Adiciono uma citação pro citado
     edges.close()
 
     return nodes
 
 
-def buildGraph(nodes):
-    graph = {}
+# Heurística
+def calcInfluencePower(nodes, node, year):
+    # Pesos
+    CURRENT_YEAR_CITATIONS = 3 # Citações recebidas no ano corrente
+    LAST_YEAR_CITATIONS = 2 # Citações recebidas no ano passado
+    PAST_CITATIONS = 1 # Citações recebidas de anos anteriores
+    CITATIONS_GIVEN = 1/2 # Citações feitas
 
-    # TODO Continuar
+    nodeYear = int(nodes[node]['year']) if nodes[node]['year'] else None
 
-    return graph
+    # Calcula parte do índice de influência do nó baseado nos anos das citações recebidas
+    power = 0
+    if nodeYear:
+        for citedBy in nodes[node]['cited-by']:
+            citedByYear = int(nodes[citedBy['to']]['year']) if nodes[citedBy['to']]['year'] else None
+            if citedByYear and citedByYear == nodeYear:
+                power += CURRENT_YEAR_CITATIONS
+            elif citedByYear and citedByYear == nodeYear - 1:
+                power += LAST_YEAR_CITATIONS
+            elif citedByYear:
+                power += PAST_CITATIONS
+            else:
+                pass
+
+    # Calcula parte do índice de influência do nó baseado nas citações feitas
+    power += len(nodes[node]['citations-given']) * CITATIONS_GIVEN
+
+    return power
 
 
-def searchTopInfluencers(graph, top=10):
+def searchTopInfluencers(nodes, year, top=10, rootNode=None):
+    # Atribui o índice de influência para os nós
+    for node in nodes:
+        nodes[node]['power'] = calcInfluencePower(nodes, node, year)
+        print(nodes[node]['id'], nodes[node]['power'])
+
+    root = randint(0, len(nodes.items())) if not rootNode else rootNode # Atribui para nó raíz um nó aleatório ou o nó passado via parâmetro
     rank = []
+    frontier = []
+    explored = []
 
-    # TODO Continuar
+    frontier.append(root)
+    while len(frontier):
+        node = frontier.pop(0) # FIFO
+        if not node in explored:
+            explored.append(node)
+
+
+    print(nodes[str(root)])
 
     return rank
-
-
-def expandirNo(node):
-    return node['recebidos']
-
-
-def escolheNoFolha(nodes):
-    escolhido = {}
-
-    for node in nodes:
-        escolhido = nodes[node]
-
-    return escolhido
-
-
-def isElementoInArray(elemento, array):
-    retorno = 0
-
-    for el in array:
-        if el == elemento:
-            retorno = 1
-
-    return retorno
-
-
-def funcaoBuscaGrafo(noInicial):
-    # inicializar frontier usando o estado inicial do problema
-    frontier = []
-    frontier.append(noInicial)
-
-    conjuntoExplorado = []
-
-    retorno = 'sucesso'
-
-    while True:
-        if len(frontier) == 0:
-            retorno = 'falha'
-            break
-
-        noFolhaAtual = escolheNoFolha(frontier)
-        frontier.remove(noFolhaAtual)
-
-        if noFolhaAtual['estado'] == 1:  # Nó está no estado meta
-            # retorna solucao
-            break
-
-        conjuntoExplorado.append(noFolhaAtual)
-
-        filhos = expandirNo(noFolhaAtual)
-
-        # Adiciona filhos que nao estão no conjunto explorado ou na fronteira
-        for filho in filhos:
-            if isElementoInArray(filhos[filho], conjuntoExplorado) == 0 or isElementoInArray(filhos[filho],
-                                                                                             frontier) == 0:
-                frontier.append(filhos[filho])
-
-    return retorno
 
 
 def searchTopInfluencersReachness(tops, nodes, isTopsWithin=False):
@@ -122,11 +101,11 @@ def searchTopInfluencersReachness(tops, nodes, isTopsWithin=False):
         node = frontier.pop(0) # FIFO
         if not node in explored:
             explored.append(node)
-            for citation in nodes[node]['feitos']:
+            for citation in nodes[node]['citations-given']:
                 if not citation['to'] in explored:
                     frontier.append(citation['to'])
 
-    # Remove os tops do array de alcançados
+    # Remove os tops do vetor de alcançados
     if not isTopsWithin:
         for top in tops:
             explored.remove(top)
@@ -137,11 +116,12 @@ def searchTopInfluencersReachness(tops, nodes, isTopsWithin=False):
 # Main
 tempoInicial = time.clock()
 
-nodes = buildNodes('vertices.txt', 'edges.txt')
+nodes = buildNodes('vertices.txt', 'edges.txt') # Cria estrutura de dados
 
-topInfluencers = ['354', '411', '2002'] # TODO substituir pelo retorno da busca com heurísitica
-reachness = searchTopInfluencersReachness(topInfluencers, nodes, True)
-for key, value in reachness.items(): # Imprime os resultados
-    print(key, value)
+for i in range(5): # Executa a busca algumas vezes para o caso de cair em bolhas sociais
+    topInfluencers = searchTopInfluencers(nodes, 2000) # Realiza a busca com heurística
+    reachness = searchTopInfluencersReachness(topInfluencers, nodes, True) # Descobre o alcance dos mais influentes
+    for key, value in reachness.items(): # Imprime os resultados
+        print(key, value)
 
 print('\nTempo de execução: ' + str(round(time.clock() - tempoInicial, 2)) + 's')
