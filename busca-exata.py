@@ -106,8 +106,8 @@ def searchTopInfluencers(nodes, year, top=10, rootNode=None, ignoreFuture=False)
 
             # Adiciona as citações recebidas à fronteira
             for citedBy in nodes[str(node)]['cited-by']:
-                if not citedBy['to'] in explored:
-                    frontier.append(citedBy['to'])
+                if not citedBy['from'] in explored:
+                    frontier.append(citedBy['from'])
 
     return rank
 
