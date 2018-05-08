@@ -31,7 +31,7 @@ def buildNodes(verticesFile, edgesFile):
         citation = {
             'from': e[0],  # Artigo citador
             'to': e[1].split()[0],  # Artigo citado
-            # 'weight': int(e[1].split()[1]),  # Peso da aresta, padrão 1
+            'weight': int(e[1].split()[1]),  # Peso da aresta, padrão 1
         }
         nodes[e[0]]['citations-given'].append(citation)  # Adiciono quem eu cito
         nodes[e[1].split()[0]]['cited-by'].append(citation)  # Adiciono uma citação pro citado
@@ -41,11 +41,12 @@ def buildNodes(verticesFile, edgesFile):
 
 
 # Heurística
-def calcInfluencePower(nodes, node, year):
+def calcInfluencePower(nodes, node, year, ignoreFuture=False):
     # Pesos
     CURRENT_YEAR_CITATIONS = 3 # Citações recebidas no ano corrente
     LAST_YEAR_CITATIONS = 2 # Citações recebidas no ano passado
     PAST_CITATIONS = 1 # Citações recebidas de anos anteriores
+    FUTURE_CITATIONS = 0 if ignoreFuture else 1 # Citações recebidas de anos futuros
     CITATIONS_GIVEN = 1/2 # Citações feitas
 
     nodeYear = int(nodes[node]['year']) if nodes[node]['year'] else None
@@ -59,10 +60,10 @@ def calcInfluencePower(nodes, node, year):
                 power += CURRENT_YEAR_CITATIONS
             elif citedByYear and citedByYear == nodeYear - 1:
                 power += LAST_YEAR_CITATIONS
-            elif citedByYear:
+            elif citedByYear and citedByYear < nodeYear - 1:
                 power += PAST_CITATIONS
-            else:
-                pass
+            elif citedByYear:
+                power += FUTURE_CITATIONS
 
     # Calcula parte do índice de influência do nó baseado nas citações feitas
     power += len(nodes[node]['citations-given']) * CITATIONS_GIVEN
@@ -70,31 +71,45 @@ def calcInfluencePower(nodes, node, year):
     return power
 
 
-def searchTopInfluencers(nodes, year, top=10, rootNode=None):
+def searchTopInfluencers(nodes, year, top=10, rootNode=None, ignoreFuture=False):
     # Atribui o índice de influência para os nós
     for node in nodes:
-        nodes[node]['power'] = calcInfluencePower(nodes, node, year)
-        print(nodes[node]['id'], nodes[node]['power'])
+        nodes[node]['power'] = calcInfluencePower(nodes, node, year, ignoreFuture)
 
-    root = randint(0, len(nodes.items())) if not rootNode else rootNode # Atribui para nó raíz um nó aleatório ou o nó passado via parâmetro
+    root = randint(0, len(nodes.items())) if not rootNode else rootNode # Atribui um nó aleatório ou o nó passado via parâmetro
     rank = []
     frontier = []
     explored = []
 
-    frontier.append(root)
+    frontier.append(root) # Adiciona a raíz como primeiro nó da fronteira
     while len(frontier):
         node = frontier.pop(0) # FIFO
+
         if not node in explored:
             explored.append(node)
+            if len(rank) < top:
+                rank.append({'id': str(node), 'power': nodes[str(node)]['power']})
 
+            else:
+                # Encontra o top menos influente no rank
+                ranked2 = [t['power'] for t in rank]
+                leastInfluencer = min(ranked2)
+                index = ranked2.index(min(ranked2))
 
-    print(nodes[str(root)])
+                # Substitui o nó caso seja mais influente que algum no rank
+                if nodes[node]['power'] > leastInfluencer:
+                    rank[index] = {'id': str(node), 'power': nodes[str(node)]['power']}
+
+            # Adiciona as citações feitas à fronteira
+            for citationGiven in nodes[str(node)]['citations-given']:
+                if not citationGiven['to'] in explored:
+                    frontier.append(citationGiven['to'])
 
     return rank
 
 
 def searchTopInfluencersReachness(tops, nodes, isTopsWithin=False):
-    frontier = tops[:] # Copia os tops sem bagunçar as referências
+    frontier = [t['id'] for t in tops] # Copia os tops sem bagunçar as referências
     explored = []
 
     while len(frontier):
@@ -107,20 +122,26 @@ def searchTopInfluencersReachness(tops, nodes, isTopsWithin=False):
 
     # Remove os tops do vetor de alcançados
     if not isTopsWithin:
-        for top in tops:
-            explored.remove(top)
+        for top in [t['id'] for t in tops]:
+             if top in explored:
+                 explored.remove(top)
 
-    return {'total': len(explored), 'tops': tops, 'reached': explored}
+    return {
+        'Total:': str(len(explored)) + ' nós',
+        'Mais Influentes:': sorted(tops, key=lambda k: k['power'], reverse=True),
+        'Alcançados:': sorted([{'id': r, 'power': nodes[r]['power']} for r in explored], key=lambda e: e['power'], reverse=True)
+    }
 
 
 # Main
 tempoInicial = time.clock()
 
+YEAR = 2000 # Ano utilizado pela busca
 nodes = buildNodes('vertices.txt', 'edges.txt') # Cria estrutura de dados
 
 for i in range(5): # Executa a busca algumas vezes para o caso de cair em bolhas sociais
-    topInfluencers = searchTopInfluencers(nodes, 2000) # Realiza a busca com heurística
-    reachness = searchTopInfluencersReachness(topInfluencers, nodes, True) # Descobre o alcance dos mais influentes
+    topInfluencers = searchTopInfluencers(nodes, YEAR) # Realiza a busca com heurística passando um ano como parâmetro
+    reachness = searchTopInfluencersReachness(topInfluencers, nodes) # Descobre o alcance dos mais influentes
     for key, value in reachness.items(): # Imprime os resultados
         print(key, value)
 
