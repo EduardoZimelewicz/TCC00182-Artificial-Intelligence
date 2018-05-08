@@ -105,7 +105,7 @@ def definirNoEntrada(nodes):
     retorno = {}
 
     for node in nodes:
-        if nodes[node]['id'] == 105:
+        if nodes[node]['id'] == randint(0, 2000):
             retorno = nodes[node]
 
     return retorno
@@ -155,7 +155,7 @@ def funcaoBuscaGrafo(noInicial, nodes):
         'state': 0, #Estado inicial
         'parent': {},
         'action': 0,
-        'pathCost': noInicial['peso'] + 0, #f = h + g
+        'pathCost': noInicial['peso'], #f = h + g
         'filhos': noInicial['recebidos'], #Edges dos filhos
         'g': 0,
         'id': noInicial['id']
@@ -176,10 +176,6 @@ def funcaoBuscaGrafo(noInicial, nodes):
 
         conjuntoExplorado.append(noFolhaAtual)
 
-        if noFolhaAtual['state'] == 1: #Nó está no estado meta
-            #retorna solucao
-            retorno = conjuntoExplorado
-            break
 
         filhos = expandirNo(noFolhaAtual)
 
@@ -265,13 +261,13 @@ def influentes(visitados):
 tempoInicial = time.clock()
 
 nodes = buildNodes('vertices.txt', 'edges.txt')
-definirNoSaidaAleatorio(nodes)
 
-nodeEntrada = definirNoEntrada(nodes)
+for i in range(5):
+    nodeEntrada = definirNoEntrada(nodes)
 
-printaVisitados(funcaoBuscaGrafo(nodeEntrada, nodes))
+    printaVisitados(funcaoBuscaGrafo(nodeEntrada, nodes))
 
-#print(nodes)
+    #print(nodes)
 graph = buildGraph(nodes)
 searchTopInfluencers(graph)
 
