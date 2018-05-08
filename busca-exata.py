@@ -89,7 +89,6 @@ def searchTopInfluencers(nodes, year, top=10, rootNode=None, ignoreFuture=False)
             explored.append(node)
             if len(rank) < top:
                 rank.append({'id': str(node), 'power': nodes[str(node)]['power']})
-
             else:
                 # Encontra o top menos influente no rank
                 ranked2 = [t['power'] for t in rank]
@@ -104,6 +103,11 @@ def searchTopInfluencers(nodes, year, top=10, rootNode=None, ignoreFuture=False)
             for citationGiven in nodes[str(node)]['citations-given']:
                 if not citationGiven['to'] in explored:
                     frontier.append(citationGiven['to'])
+
+            # Adiciona as citações recebidas à fronteira
+            for citedBy in nodes[str(node)]['cited-by']:
+                if not citedBy['to'] in explored:
+                    frontier.append(citedBy['to'])
 
     return rank
 
