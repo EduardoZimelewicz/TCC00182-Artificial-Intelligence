@@ -109,11 +109,11 @@ def searchTopInfluencers(nodes, year, top=10, rootNode=None, ignoreFuture=False)
                 if not citedBy['from'] in explored:
                     frontier.append(citedBy['from'])
 
-    return rank
+    return {'rank': rank, 'root': root}
 
 
 def searchTopInfluencersReachness(tops, nodes, isTopsWithin=False):
-    frontier = [t['id'] for t in tops] # Copia os tops sem bagunçar as referências
+    frontier = [t['id'] for t in tops['rank']] # Copia os tops sem bagunçar as referências
     explored = []
 
     while len(frontier):
@@ -126,13 +126,14 @@ def searchTopInfluencersReachness(tops, nodes, isTopsWithin=False):
 
     # Remove os tops do vetor de alcançados
     if not isTopsWithin:
-        for top in [t['id'] for t in tops]:
+        for top in [t['id'] for t in tops['rank']]:
              if top in explored:
                  explored.remove(top)
 
     return {
+        'Raíz': tops['root'],
         'Total:': str(len(explored)) + ' nós',
-        'Mais Influentes:': sorted(tops, key=lambda k: k['power'], reverse=True),
+        'Mais Influentes:': sorted(tops['rank'], key=lambda k: k['power'], reverse=True),
         'Alcançados:': sorted([{'id': r, 'power': nodes[r]['power']} for r in explored], key=lambda e: e['power'], reverse=True)
     }
 
@@ -144,6 +145,7 @@ YEAR = 2000 # Ano utilizado pela busca
 nodes = buildNodes('vertices.txt', 'edges.txt') # Cria estrutura de dados
 
 for i in range(5): # Executa a busca algumas vezes para o caso de cair em bolhas sociais
+    print('\n')
     topInfluencers = searchTopInfluencers(nodes, YEAR) # Realiza a busca com heurística passando um ano como parâmetro
     reachness = searchTopInfluencersReachness(topInfluencers, nodes) # Descobre o alcance dos mais influentes
     for key, value in reachness.items(): # Imprime os resultados
