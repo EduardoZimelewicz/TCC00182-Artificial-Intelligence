@@ -104,8 +104,10 @@ def definirNoSaidaAleatorio(nodes):
 def definirNoEntrada(nodes):
     retorno = {}
 
+    indexNo = randint(0, 1000)
+
     for node in nodes:
-        if nodes[node]['id'] == randint(0, 2000):
+        if nodes[node]['id'] == indexNo:
             retorno = nodes[node]
 
     return retorno
@@ -155,7 +157,7 @@ def funcaoBuscaGrafo(noInicial, nodes):
         'state': 0, #Estado inicial
         'parent': {},
         'action': 0,
-        'pathCost': noInicial['peso'], #f = h + g
+        'pathCost': noInicial['peso'],
         'filhos': noInicial['recebidos'], #Edges dos filhos
         'g': 0,
         'id': noInicial['id']
