@@ -1,5 +1,5 @@
-#Second project
+# Second project
 
-# Question & Answering System in PROLOG
+## Question & Answering System in PROLOG
 
-# Theme: World Cup 2002
+## Theme: World Cup 2002
