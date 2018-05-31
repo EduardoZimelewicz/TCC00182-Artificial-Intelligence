@@ -48,7 +48,7 @@ venceu(alemanha, arabia_saudita, 8, 0, grupo).
 venceu(alemanha, camaroes, 2, 0, grupo).
 venceu(alemanha, paraguai, 1, 0, oitava).
 venceu(alemanha, estados_unidos, 1, 0, quarta).
-venceu(alemanha, coreia_do_sul, 1 , 0, semi).
+venceu(alemanha, coreia_do_sul, 1, 0, semi).
 
 venceu(senegal, frança, 1, 0, grupo).
 venceu(dinamarca, frança, 2, 0, grupo).
@@ -75,7 +75,7 @@ empatou(inglaterra, suecia, 1, 1, grupo).
 empatou(inglaterra, nigeria, 0, 0, grupo).
 
 campeao(X) :-
-    invicto(X) , venceu(X, Y, G, G, Fase).
+    invicto(X) , venceu(X, Y, G_X, G_Y, Fase).
 
 finalista(alemanha, 3).
 finalista(brasil, 3).
