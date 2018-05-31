@@ -77,10 +77,16 @@ empatou(inglaterra, nigeria, 0, 0, grupo).
 campeao(X) :-
     invicto(X) , venceu(X, Y, G_X, G_Y, Fase).
 
-finalista(alemanha, 3).
-finalista(brasil, 3).
+finalista(alemanha, 3). %numero de finais
+finalista(brasil, 3). 
 
-mais_copas(cafu, 3).
+mais_copas(cafu, 3). %numero de copas
 
 artilheiro(ronaldo).
+
 craque(oliver_kahn).
+
+read_question :- 
+    write('escreva sua pergunta: '),
+	read(X),
+    (X = 'Quem é o campeão?' -> campeao(Y), write(Y)).
