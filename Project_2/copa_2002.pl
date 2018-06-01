@@ -82,11 +82,44 @@ finalista(brasil, 3).
 
 mais_copas(cafu, 3). %numero de copas
 
-artilheiro(ronaldo).
+artilheiro(X) :-
+	gols(X,Y),
+	gols(Z,W),
+	Y > W,
+	jogador_team(X,T),
+	format('~w foi o artilheiro da copa pelo time ~w', [X,T]).
 
 craque(oliver_kahn).
 
+gols(ronaldo,8).
+gols(batistuta,1).
+gols(vieri,4).
+gols(klose,5).
+gols(owen,2).
+
+/*Tive que colocar team pq time é palavra reservada*/
+jogador_team(ronaldo,brasil).
+jogador_team(klose,alemanha).
+jogador_team(oliver_kahn,alemanha).
+jogador_team(batistuta,argentina).
+jogador_team(vieri,italia).
+jogador_team(owen,inglaterra).
+
+mais_defesa_jogo(Y) :- 
+	defesa_jogo(Y,X),
+	defesa_jogo(Z,W),
+	X > W,
+	format('~w foi o goleiro com mais defesa/jogo', [Y]).
+
+defesa_jogo(dabanovic,8). 
+defesa_jogo(majdan,5). 
+defesa_jogo(rustu,5). 
+defesa_jogo(dudek,9 rdiv 2).
+defesa_jogo(shorunmu,9 rdiv 2).
+defesa_jogo(simeunovic,9 rdiv 2). 
+
 read_question :- 
     write('escreva sua pergunta: '),
-	read(X),
-    (X = 'Quem é o campeão?' -> campeao(Y), write(Y)).
+    	read(X),
+    (X = 'Quem é o campeão?' -> campeao(Y), write(Y));
+    (X = 'Quem foi o artilheiro das campeãs?' -> mais_defesa_jogo(W)).
