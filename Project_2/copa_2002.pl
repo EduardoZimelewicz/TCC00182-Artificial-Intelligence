@@ -122,4 +122,4 @@ read_question :-
     write('escreva sua pergunta: '),
     	read(X),
     (X = 'Quem é o campeão?' -> campeao(Y), write(Y));
-    (X = 'Quem foi o artilheiro das campeãs?' -> mais_defesa_jogo(W)).
+    (X = 'Quem foi o artilheiro das campeãs?' -> artilheiro(W)).
