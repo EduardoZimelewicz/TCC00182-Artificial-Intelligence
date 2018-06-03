@@ -55,7 +55,9 @@ venceu(dinamarca, frança, 2, 0, grupo).
 
 venceu(argentina, nigeria, 1, 0, grupo).
 
-venceu(italia, equador, 2, 1, grupo).
+venceu(italia, equador, 2, 0, grupo).
+
+venceu(croacia, italia, 2, 1, grupo).
 
 venceu(inglaterra, argentina, 1, 0, grupo).
 venceu(inglaterra, dinamarca, 3, 0, oitava).
@@ -75,7 +77,7 @@ empatou(inglaterra, suecia, 1, 1, grupo).
 empatou(inglaterra, nigeria, 0, 0, grupo).
 
 campeao(X) :-
-    invicto(X) , venceu(X, Y, G_X, G_Y, Fase).
+    invicto(X) , venceu(X,_,_,_,_).
 
 finalista(alemanha, 3). %numero de finais
 finalista(brasil, 3). 
@@ -84,7 +86,7 @@ mais_copas(cafu, 3). %numero de copas
 
 artilheiro(X) :-
 	gols(X,Y),
-	gols(Z,W),
+	gols(_,W),
 	Y > W,
 	jogador_team(X,T),
 	format('~w foi o artilheiro da copa pelo time ~w', [X,T]).
@@ -107,9 +109,16 @@ jogador_team(owen,inglaterra).
 
 mais_defesa_jogo(Y) :- 
 	defesa_jogo(Y,X),
-	defesa_jogo(Z,W),
+	defesa_jogo(_,W),
 	X > W,
 	format('~w foi o goleiro com mais defesa/jogo', [Y]).
+
+pontos_grupo(italia) :-
+	P is 3 + 1,
+	write(P).
+
+fase_eliminacao(italia) :-
+	venceu(_,italia,_,_,grupo).
 
 defesa_jogo(dabanovic,8). 
 defesa_jogo(majdan,5). 
@@ -118,8 +127,13 @@ defesa_jogo(dudek,9 rdiv 2).
 defesa_jogo(shorunmu,9 rdiv 2).
 defesa_jogo(simeunovic,9 rdiv 2). 
 
+resposta(X) :-
+	X == 'Quem é o campeão?' -> campeao(Y), write(Y);
+	X == 'Quem foi o artilheiro das campeãs?' -> artilheiro(_);
+	X == 'Qual goleiro fez mais defesa/jogo?' -> mais_defesa_jogo(_);
+	X == 'teste' -> fase_eliminacao(italia).
+
 read_question :- 
-    write('escreva sua pergunta: '),
-    	read(X),
-    (X = 'Quem é o campeão?' -> campeao(Y), write(Y));
-    (X = 'Quem foi o artilheiro das campeãs?' -> artilheiro(W)).
+	write(':'),
+    read(X),
+    resposta(X).
