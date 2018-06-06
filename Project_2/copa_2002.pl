@@ -67,6 +67,11 @@ gols(klose,5).
 gols(owen,2).
 gols(ronaldo,8).
 
+dribles(cuevas, 12, 2).
+dribles(ben_achour, 16, 3).
+dribles(ortega, 17, 3).
+dribles(diouf, 35, 5).
+
 /*Tive que colocar team pq time é palavra reservada*/
 jogador_team(ronaldo,brasil).
 jogador_team(klose,alemanha).
@@ -134,6 +139,16 @@ time_gols(X, []) :-
     G is G1 + G2 + G3 + G4,
     format('~w', [G]).
 
+mais_dribles_jogo(X) :-
+    dribles(X, Dx, Jx),
+    Mx is div(Dx, Jx),
+    not((
+         dribles(_, Dy, Jy),
+         My is div(Dy, Jy),
+         My > Mx
+        )),
+    format('~w', [X]).
+
 len([],0). 
 len([_|T],N)  :-  
     len(T,X),  N  is  X+1.
@@ -149,7 +164,8 @@ resposta(X) :-
 	X == 'Qual goleiro fez mais defesa/jogo?' -> mais_defesa_jogo(_);
 	X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
     X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
-	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia).
+	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia);
+    X == 'Qual jogador fez mais dribles por jogo?' -> mais_dribles_jogo(_).  
 
 read_question :- 
     read(X),
