@@ -148,7 +148,7 @@ resposta(X) :-
 	X == 'Quem foi o artilheiro das campeãs?' -> artilheiro(_);
 	X == 'Qual goleiro fez mais defesa/jogo?' -> mais_defesa_jogo(_);
 	X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
-    	X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
+    X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
 	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia).
 
 read_question :- 
