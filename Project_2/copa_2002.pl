@@ -114,6 +114,14 @@ mais_defesa_jogo(Y) :-
        )),
 	format('~w foi o goleiro com mais defesa/jogo', [Y]).
 
+pontos_grupo(T) :-
+	findall(T,venceu(T,_,_,_,grupo),TVenceu),
+	length(TVenceu,V),
+	findall(T,empatou(T,_,_,_,grupo),TEmpatou),
+	length(TEmpatou,E),
+	P is V*3 + E,
+	format('A seleção ~w teve ~w pontos na fase de grupo', [T,P]).
+
 time_gols(X, []) :-
     findall(Y, venceu(X,_,Y,_,_), GVenceu),
     sumlist(GVenceu, G1),
@@ -140,7 +148,8 @@ resposta(X) :-
 	X == 'Quem foi o artilheiro das campeãs?' -> artilheiro(_);
 	X == 'Qual goleiro fez mais defesa/jogo?' -> mais_defesa_jogo(_);
 	X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
-    X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []).
+    	X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
+	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia).
 
 read_question :- 
     read(X),
