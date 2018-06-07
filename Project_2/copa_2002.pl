@@ -182,13 +182,10 @@ resposta(X) :-
 	X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
     X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
 	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia);
-<<<<<<< HEAD
-	X == 'Quantas vitórias a Alemanha teve na copa?' -> qnts_time_venceu(alemanha).
-=======
+	X == 'Quantas vitórias a Alemanha teve na copa?' -> qnts_time_venceu(alemanha);
     X == 'Qual jogador fez mais dribles por jogo?' -> mais_dribles_jogo(_);
 	X == 'Quantas goleadas tiveram?' -> n_goleadas(_,_);
     X == 'Quantos empates sem gols?' ->  n_empates_sem_gols(_,_).
->>>>>>> 1d085e84e958586e1d300d57ae92b46c5537390b
 
 read_question :- 
     read(X),
