@@ -176,15 +176,15 @@ sem_gols(X) :-
     Gy == Gx.
 
 resposta(X) :-
-	X == 'Quem é o campeão?' -> campeao(_);
-	X == 'Quem foi o artilheiro das campeãs?' -> artilheiro(_);
-	X == 'Qual goleiro fez mais defesa/jogo?' -> mais_defesa_jogo(_);
-	X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
+    X == 'Quem é o campeão?' -> campeao(_);
+    X == 'Quem foi o artilheiro das campeãs?' -> artilheiro(_);
+    X == 'Qual goleiro fez mais defesa/jogo?' -> mais_defesa_jogo(_);
+    X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
     X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
-	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia);
-	X == 'Quantas vitórias a Alemanha teve na copa?' -> qnts_time_venceu(alemanha);
+    X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia);
+    X == 'Quantas vitórias a Alemanha teve na copa?' -> qnts_time_venceu(alemanha);
     X == 'Qual jogador fez mais dribles por jogo?' -> mais_dribles_jogo(_);
-	X == 'Quantas goleadas tiveram?' -> n_goleadas(_,_);
+    X == 'Quantas goleadas tiveram?' -> n_goleadas(_,_);
     X == 'Quantos empates sem gols?' ->  n_empates_sem_gols(_,_).
 
 read_question :- 
