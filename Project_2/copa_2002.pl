@@ -45,9 +45,6 @@ empatou(italia, mexico, 1, 1, grupo).
 empatou(inglaterra, suecia, 1, 1, grupo).
 empatou(inglaterra, nigeria, 0, 0, grupo).
 
-finalista(alemanha, 3). %numero de finais
-finalista(brasil, 3). 
-
 mais_copas(cafu, 3).
 mais_copas(buffon, 4).
 mais_copas(rafa_marquez, 5).
@@ -153,10 +150,24 @@ len([],0).
 len([_|T],N)  :-  
     len(T,X),  N  is  X+1.
 
-n_vitorias(X, V) :-
-    findall(X, venceu(X,_,_,_,_), GV1),
-    nth0(0,GV1,X),
-    len(GV1, V).
+n_goleadas(X, V) :-
+    findall(X, goleada(X), GV1),
+   	len(GV1, V),
+    format('~w', [V]).
+
+n_empates_sem_gols(X, V) :-
+    findall(X, sem_gols(X), GV1),
+   	len(GV1, V),
+    format('~w', [V]).
+
+goleada(X) :-
+    venceu(X,_,Gx, Gy,_),
+    Gx - Gy >= 3.
+
+sem_gols(X) :-
+    empatou(X,_,Gx, Gy,_),
+    Gx == 0,
+    Gy == Gx.
 
 resposta(X) :-
 	X == 'Quem é o campeão?' -> campeao(_);
@@ -165,7 +176,9 @@ resposta(X) :-
 	X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
     X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
 	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia);
-    X == 'Qual jogador fez mais dribles por jogo?' -> mais_dribles_jogo(_).  
+    X == 'Qual jogador fez mais dribles por jogo?' -> mais_dribles_jogo(_);
+	X == 'Quantas goleadas tiveram?' -> n_goleadas(_,_);
+    X == 'Quantos empates sem gols?' ->  n_empates_sem_gols(_,_).
 
 read_question :- 
     read(X),
