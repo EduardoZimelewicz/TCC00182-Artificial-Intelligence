@@ -45,9 +45,6 @@ empatou(italia, mexico, 1, 1, grupo).
 empatou(inglaterra, suecia, 1, 1, grupo).
 empatou(inglaterra, nigeria, 0, 0, grupo).
 
-finalista(alemanha, 3). %numero de finais
-finalista(brasil, 3). 
-
 mais_copas(cafu, 3).
 mais_copas(buffon, 4).
 mais_copas(rafa_marquez, 5).
@@ -66,6 +63,11 @@ gols(vieri,4).
 gols(klose,5).
 gols(owen,2).
 gols(ronaldo,8).
+
+dribles(cuevas, 12, 2).
+dribles(ben_achour, 16, 3).
+dribles(ortega, 17, 3).
+dribles(diouf, 35, 5).
 
 /*Tive que colocar team pq time é palavra reservada*/
 jogador_team(ronaldo,brasil).
@@ -140,14 +142,38 @@ time_gols(X, []) :-
     G is G1 + G2 + G3 + G4,
     format('~w', [G]).
 
+mais_dribles_jogo(X) :-
+    dribles(X, Dx, Jx),
+    Mx is div(Dx, Jx),
+    not((
+         dribles(_, Dy, Jy),
+         My is div(Dy, Jy),
+         My > Mx
+        )),
+    format('~w', [X]).
+
 len([],0). 
 len([_|T],N)  :-  
     len(T,X),  N  is  X+1.
 
-n_vitorias(X, V) :-
-    findall(X, venceu(X,_,_,_,_), GV1),
-    nth0(0,GV1,X),
-    len(GV1, V).
+n_goleadas(X, V) :-
+    findall(X, goleada(X), GV1),
+   	len(GV1, V),
+    format('~w', [V]).
+
+n_empates_sem_gols(X, V) :-
+    findall(X, sem_gols(X), GV1),
+   	len(GV1, V),
+    format('~w', [V]).
+
+goleada(X) :-
+    venceu(X,_,Gx, Gy,_),
+    Gx - Gy >= 3.
+
+sem_gols(X) :-
+    empatou(X,_,Gx, Gy,_),
+    Gx == 0,
+    Gy == Gx.
 
 resposta(X) :-
 	X == 'Quem é o campeão?' -> campeao(_);
@@ -156,7 +182,13 @@ resposta(X) :-
 	X == 'Qual jogador tem mais copas disputadas?'-> disputas(_);
     X == 'Quantos gols fez a Alemanha?'-> time_gols(alemanha, []);
 	X == 'Quantos pontos a Italia fez na fase de grupo?' -> pontos_grupo(italia);
+<<<<<<< HEAD
 	X == 'Quantas vitórias a Alemanha teve na copa?' -> qnts_time_venceu(alemanha).
+=======
+    X == 'Qual jogador fez mais dribles por jogo?' -> mais_dribles_jogo(_);
+	X == 'Quantas goleadas tiveram?' -> n_goleadas(_,_);
+    X == 'Quantos empates sem gols?' ->  n_empates_sem_gols(_,_).
+>>>>>>> 1d085e84e958586e1d300d57ae92b46c5537390b
 
 read_question :- 
     read(X),
