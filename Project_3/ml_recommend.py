@@ -1,18 +1,21 @@
 import numpy as np 
 import pandas as pd 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
+from sklearn.metrics.pairwise import linear_kernel, cosine_similarity, pairwise_kernels
 
 movies = pd.read_csv('ml-latest-small/movies.csv', sep=',', header=None)
 
 tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 1), min_df=0, stop_words='english')
 tfidf_matrix = tf.fit_transform(movies[2])
 
-cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
+#cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
+#cosine_similarities = cosine_similarity(tfidf_matrix, tfidf_matrix)
+cosine_similarities = pairwise_kernels(tfidf_matrix, tfidf_matrix)
 
 results = {}
 
 for idx, row in movies.iterrows():
+    # linear-kernel
     similar_indices = cosine_similarities[idx].argsort()[:-100:-1]
     similar_items = [(cosine_similarities[idx][i], movies[0][i]) for i in similar_indices]
 
@@ -37,4 +40,4 @@ def recommend(item_id, num):
 # Just plug in any item id here (1-500), and the number of recommendations you want (1-99)
 # You can get a list of valid item IDs by evaluating the variable 'ds', or a few are listed below
 
-recommend(item_id=2019, num=5)
+recommend(item_id=1681, num=5)
