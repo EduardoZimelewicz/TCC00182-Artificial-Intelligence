@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import linear_kernel
 movies = pd.read_csv('ml-latest-small/movies.csv', sep=',', header=None)
 
 tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 1), min_df=0, stop_words='english')
-tfidf_matrix = tf.fit_transform(movies[1])
+tfidf_matrix = tf.fit_transform(movies[2])
 
 cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
 
@@ -37,4 +37,4 @@ def recommend(item_id, num):
 # Just plug in any item id here (1-500), and the number of recommendations you want (1-99)
 # You can get a list of valid item IDs by evaluating the variable 'ds', or a few are listed below
 
-recommend(item_id=260, num=5)
+recommend(item_id=2019, num=5)
