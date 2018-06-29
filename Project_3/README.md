@@ -1,6 +1,6 @@
 To run the project, you must run
 ```
-python wine_recommend.py
+python wine_ml.py
 ```
 
 A recommendation system based by movie genre
