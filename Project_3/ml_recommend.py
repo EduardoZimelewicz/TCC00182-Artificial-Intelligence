@@ -3,6 +3,8 @@ import pandas as csv_manager
 from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.metrics import mean_squared_error
 from math import sqrt
+import scipy.sparse
+from scipy.sparse.linalg import svds
 from sklearn import model_selection
 
 """
@@ -63,7 +65,6 @@ ratings_similarity = pairwise_distances(train_data_matrix.T, metric='cosine')
 
 # ------------------------------------------------------------------------------------------------------------ PREDIÇÃO
 def predict(ratings, similarity, type='user'):
-    print(numpy.abs([[1.0, -3.0, 4.0]]).sum(axis=1))
     somatorio = numpy.abs(similarity).sum(axis=1)  # [[1.0, -3.0, 4.0]] => [[1.0, 3.0, 4.0]] => [8.0]
     return ratings.dot(similarity) / numpy.array([somatorio])
 
@@ -81,8 +82,13 @@ def rmse(prediction, ground_truth):
     return sqrt(mean_squared_error(prediction, ground_truth))
 
 
+u, s, vt = svds(train_data_matrix, k=5)
+s_diag_matrix= numpy.diag(s)
+X_pred = numpy.dot(numpy.dot(u, s_diag_matrix), vt)
+print('User-based CF MSE: ' + str(rmse(X_pred, test_data_matrix)))
+
 # print('User-based CF RMSE: ' + str(rmse(user_prediction, test_data_matrix)))
-print('Item-based CF RMSE: ' + str(rmse(item_prediction, test_data_matrix)))
+# print('Item-based CF RMSE: ' + str(rmse(item_prediction, test_data_matrix)))
 
 sparsity = round(1.0 - len(ratings) / float(n_users * n_ratings), 3)
 print('\nA base da dados possui esparsidade de ' + str(sparsity * 100) + '%')
