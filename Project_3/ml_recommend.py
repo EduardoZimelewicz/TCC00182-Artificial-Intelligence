@@ -1,8 +1,6 @@
 import numpy
 import pandas as csv_manager
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import pairwise_distances, linear_kernel, cosine_similarity, pairwise_kernels
-from sklearn.linear_model import LinearRegression
+from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 from sklearn import model_selection
@@ -21,25 +19,24 @@ from sklearn import model_selection
 OBS: Estamos fazendo a técnica #2
 
 """
+
 # ---------------------------------------------------------- CARREGAMENTO DE BASE DE DADOS E INICIALIZAÇÃO DE VARIÁVEIS
 # Carrega os dados dos arquivos .csv
-movies = csv_manager.read_csv('ml-latest-small/movies.csv', sep=',', header=None, names=['id','title','genres'])
-ratings = csv_manager.read_csv('ml-latest-small/ratings.csv', sep=',', header=None, names=['user_id','movie_id','rating', 'timestamp'])
+movies = csv_manager.read_csv('ml-latest-small/movies.csv', sep=',', header=None, names=['id', 'title', 'genres'])
+ratings = csv_manager.read_csv('ml-latest-small/ratings.csv', sep=',', header=None, names=['user_id', 'movie_id', 'rating', 'timestamp'])
 
 # Quantidades
-n_movies = movies.id.unique().shape[0]          # Filmes
-n_genres = movies.genres.unique().shape[0]      # Gêneros
-n_users = ratings.user_id.unique().shape[0]     # Usuários
+n_movies = movies.id.unique().shape[0]  # Filmes
+n_genres = movies.genres.unique().shape[0]  # Gêneros
+n_users = ratings.user_id.unique().shape[0]  # Usuários
 n_ratings = ratings.movie_id.unique().shape[0]  # Avaliações
 
 print("Filmes: \t" + str(n_movies) + "\t | \t Gêneros diferentes: \t" + str(n_genres))
 print("Usuários: \t" + str(n_users) + "\t\t | \t Filmes avaliados: \t\t" + str(n_ratings))
 
-
 # ----------------------------------------------------------------------------------------------- TREINO SUPERVISIONADO
 # 75% Treino, 25% Teste
-train_data, test_data = model_selection.train_test_split(ratings, test_size=0.25) # test_size=25%
-
+train_data, test_data = model_selection.train_test_split(ratings, test_size=0.25)  # test_size=25%
 
 # Associa os ids dos filmes com indices da matriz de treino e de teste
 # exemplo: { id_filme: 2055, index_matriz: 1616 }
@@ -48,7 +45,6 @@ train_data, test_data = model_selection.train_test_split(ratings, test_size=0.25
 movies_id_index = {}
 for index, movie in enumerate(movies.id.values):
     movies_id_index[str(movie)] = index
-
 
 # ------------------------------------------------------------------------------------------------------------ MATRIZES
 # Matriz Usuário-Item de TREINO
@@ -67,17 +63,10 @@ ratings_similarity = pairwise_distances(train_data_matrix.T, metric='cosine')
 
 # ------------------------------------------------------------------------------------------------------------ PREDIÇÃO
 def predict(ratings, similarity, type='user'):
-    if type == 'user':
-        mean_user_rating = ratings.mean(axis=1)
-        #You use numpy.newaxis so that mean_user_rating has same format as ratings
-        ratings_diff = (ratings - mean_user_rating[:, numpy.newaxis])
-        pred = mean_user_rating[:, numpy.newaxis] + similarity.dot(ratings_diff) / numpy.array([numpy.abs(similarity).sum(axis=1)]).T
-    elif type == 'item':
-        print('simi', similarity)
-        print('dot', ratings.dot(similarity))
+    print(numpy.abs([[1.0, -3.0, 4.0]]).sum(axis=1))
+    somatorio = numpy.abs(similarity).sum(axis=1)  # [[1.0, -3.0, 4.0]] => [[1.0, 3.0, 4.0]] => [8.0]
+    return ratings.dot(similarity) / numpy.array([somatorio])
 
-        pred = ratings.dot(similarity) / numpy.array([numpy.abs(similarity).sum(axis=1)])
-    return pred
 
 item_prediction = predict(train_data_matrix, ratings_similarity, type='item')
 print(item_prediction)
@@ -91,12 +80,12 @@ def rmse(prediction, ground_truth):
 
     return sqrt(mean_squared_error(prediction, ground_truth))
 
+
 # print('User-based CF RMSE: ' + str(rmse(user_prediction, test_data_matrix)))
-# print('Item-based CF RMSE: ' + str(rmse(item_prediction, test_data_matrix)))
+print('Item-based CF RMSE: ' + str(rmse(item_prediction, test_data_matrix)))
 
-sparsity=round(1.0 - len(ratings) / float(n_users * n_ratings),3)
-print('\nA base da dados possui esparsidade de ' + str(sparsity*100) + '%')
-
+sparsity = round(1.0 - len(ratings) / float(n_users * n_ratings), 3)
+print('\nA base da dados possui esparsidade de ' + str(sparsity * 100) + '%')
 
 # ------------------------------------------------------------------------------------------------------------ ANTIGO
 # tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 1), min_df=0, stop_words='english')
