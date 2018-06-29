@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy
 import pandas as csv_manager
 from sklearn.metrics.pairwise import pairwise_distances
