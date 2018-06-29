@@ -20,13 +20,14 @@ qtd_gols(Jogador, [Head], Total) :-
     X is Total + G,
     format('~w', [X]).
 
-qtd_gols(Jogador, [Head|Tail], Total) :-
-    verificaMarcador(Jogador, Head, G),
-    X is Total + G,
-    format('~w', [X]),
-    qtd_gols(Jogador, Tail, X).
+qtd_gols(Jogador, Marcadores, Total) :-
+    /* verificaMarcador(Jogador, Head, G),*/
+    findall(Jogador, Marcadores, Total),
+    length(Total, TT),
+    format('~w', [TT]).
 
 gols_feitos(Jogador, Fase) :-
     jogo(_, _, _, _, Fase, Marcadores),
-    qtd_gols(Jogador, Marcadores, TT),
+    findall(Jogador, Marcadores, Total),
+    length(Total, TT),
     format('~w fez ~w gols ', [Jogador, TT]).
