@@ -37,7 +37,7 @@ n_ratings = ratings.movie_id.unique().shape[0]  # Avaliações
 
 print("Filmes: \t" + str(n_movies) + "\t | \t Gêneros diferentes: \t" + str(n_genres))
 print("Usuários: \t" + str(n_users) + "\t\t | \t Filmes avaliados: \t\t" + str(n_ratings))
-
+print(movies)
 # ----------------------------------------------------------------------------------------------- TREINO SUPERVISIONADO
 # 75% Treino, 25% Teste
 train_data, test_data = model_selection.train_test_split(ratings, test_size=0.25)  # test_size=25%
